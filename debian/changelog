@@ -1,0 +1,6 @@
+dde-requ (1.0.0) UNRELEASED; urgency=low
+
+  * Initial release. Closes: #nnnn
+    <nnnn is the bug number of your ITP>
+
+ --  <>  Tue, 24 Sep 2024 00:41:12 +0800
