@@ -1,6 +1,6 @@
 # 热区
 
-config file: $HOME/.config/deepin/dde-requ-setting.qaq
+config file: $HOME/.config/gxde/gxde-requ-setting.qaq
 
 格式：
 ```
