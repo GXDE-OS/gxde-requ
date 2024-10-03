@@ -14,7 +14,7 @@ requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
     this->setAttribute(Qt::WA_X11DoNotAcceptFocus);
     this->setWindowFlags(Qt::WindowDoesNotAcceptFocus);
-    this->setWindowOpacity(0.5);
+    //this->setWindowOpacity(0.5);
     this->raise();
     setFixedSize(WIDGET_WIDTH, WIDGET_WIDTH);
     setMaximumSize(WIDGET_WIDTH, WIDGET_WIDTH);
@@ -25,8 +25,9 @@ void requ::setShell(QString t)
 }
 void requ::runShell()
 {
-    QProcess *run=new QProcess;
+    QProcess *run = new QProcess;
     run->startDetached(shell);
+    Timer->stop();  // 运行程序后停止 QTimer 以避免重复打开应用
 }
 
 void requ::paintEvent(QPaintEvent*)
@@ -37,9 +38,7 @@ void requ::paintEvent(QPaintEvent*)
     }
     QPainter paint;
     paint.begin(this);
-    paint.setPen(QPen(Qt::cyan));
-    paint.setBrush(QBrush(Qt::cyan));//设置画刷形式
-    //paint.drawRect()
+    // 计算圆心坐标
     int x = 0, y = 0;
     switch (showPlace) {
     case Place::TopLeft:
@@ -61,7 +60,20 @@ void requ::paintEvent(QPaintEvent*)
     }
     x -= WIDGET_WIDTH;
     y -= WIDGET_WIDTH;
-    paint.drawEllipse(x, y, WIDGET_WIDTH * 2, WIDGET_WIDTH * 2);
+    // 绘制渐变的同心圆
+    double lessColor = 255.0 / WIDGET_WIDTH;
+    for (int i = 0; i <= WIDGET_WIDTH; ++i) {
+        // 计算该同心圆的透明度
+        int trans = 255 - lessColor * i;
+        // 设置绘制的透明度
+        paint.setPen(QPen(QColor(0, 255, 255, trans)));
+        paint.setBrush(QBrush(QColor(0, 255, 255, trans)));
+        // 因为 Qt 中，用于定位圆的坐标并不是圆心，而是与圆相切的矩形左上角点的坐标
+        // 因此需要动态计算圆的 x, y 坐标以便正确绘制同心圆
+        int drawX = x + (WIDGET_WIDTH - i);
+        int drawY = y + (WIDGET_WIDTH - i);
+        paint.drawEllipse(drawX, drawY, i * 2, i * 2);
+    }
     paint.end();
 }
 
@@ -75,12 +87,12 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
             Timer->start(600);
             Timer->setSingleShot(true);
             return true;
-        } else if(event->type()== QEvent::HoverLeave){
+        } else if(event->type() == QEvent::HoverLeave){
             mouseOnHotPlace = false;
             Timer->stop();
 
         }
     }
     update();  // 重新绘制窗口以显示/关闭动画
-    return QWidget::eventFilter(obj,event);
+    return QWidget::eventFilter(obj, event);
 }

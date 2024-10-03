@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QProcess>
 #include <QCoreApplication>
-#define WIDGET_WIDTH 20
+#define WIDGET_WIDTH 30
 
 class requ : public QWidget
 {
