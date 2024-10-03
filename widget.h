@@ -16,10 +16,10 @@ public:
     explicit Widget(QWidget *parent = nullptr);
 private:
     QSettings *qaq;
-    requ *TopLeft=new requ;
-    requ *TopRight=new requ;
-    requ *LowerLeft=new requ;
-    requ *LowerRight=new requ;
+    requ *TopLeft = new requ(requ::TopLeft);
+    requ *TopRight = new requ(requ::TopRight);
+    requ *LowerLeft = new requ(requ::LowerLeft);
+    requ *LowerRight = new requ(requ::LowerRight);
 
 signals:
 

@@ -6,16 +6,30 @@
 #include <QTimer>
 #include <QProcess>
 #include <QCoreApplication>
+#define WIDGET_WIDTH 20
+
 class requ : public QWidget
 {
     Q_OBJECT
 public:
-    explicit requ(QWidget *parent = nullptr);
+    enum Place {
+        TopLeft,
+        TopRight,
+        LowerLeft,
+        LowerRight
+    };
+    explicit requ(Place whereIsShow, QWidget *parent = nullptr);
     void setShell(QString t);
 
+
+
 private:
-    QTimer *Timer=new QTimer;
+    QTimer *Timer = new QTimer;
     QString shell;
+    Place showPlace;
+    bool mouseOnHotPlace = false;
+
+    void paintEvent(QPaintEvent* paint);
 signals:
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
