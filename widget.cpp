@@ -4,7 +4,7 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
 {
     QDesktopWidget* pDesktopWidget = QApplication::desktop();
     QRect screenRect = QApplication::desktop()->screenGeometry();
-    qaq = new QSettings(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/deepin/gxde-requ-setting.qaq", QSettings::IniFormat);
+    qaq = new QSettings(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/gxde/gxde-requ-setting.qaq", QSettings::IniFormat);
     QString kwinrules;
     QFileInfo file1(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/ukui-kwinrulesrc");
     qDebug()<<file1.exists();
