@@ -61,13 +61,11 @@ void requ::paintEvent(QPaintEvent*)
     x -= WIDGET_WIDTH;
     y -= WIDGET_WIDTH;
     // 绘制渐变的同心圆
-    double lessColor = 200.0 / WIDGET_WIDTH;
+    double lessColor = 240.0 / WIDGET_WIDTH;
     for (int i = 0; i <= WIDGET_WIDTH; ++i) {
-        // 计算该同心圆的透明度
-        int trans = 200 - lessColor * i;
         // 设置绘制的透明度
-        paint.setPen(QPen(QColor(0,191,255, trans)));
-        paint.setBrush(QBrush(QColor(0,191,255, trans)));
+        paint.setPen(QPen(QColor(0, 191, 255, lessColor)));
+        paint.setBrush(QBrush(QColor(0, 191, 255, lessColor)));
         // 因为 Qt 中，用于定位圆的坐标并不是圆心，而是四条棱与圆相切的矩形左上角点的坐标
         // 因此需要动态计算圆的 x, y 坐标以便正确绘制同心圆
         int drawX = x + (WIDGET_WIDTH - i);
