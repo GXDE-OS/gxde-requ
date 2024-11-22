@@ -1,0 +1,9 @@
+#!/bin/bash
+PIDS=$(pidof "gxde-requ")
+
+if [ "$PIDS" = "" ]; then
+echo ---------------------------------------------------------
+echo "Starting gxde-requ...$(date)"
+echo ---------------------------------------------------------
+gxde-requ
+fi

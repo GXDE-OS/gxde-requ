@@ -59,6 +59,8 @@ override_dh_auto_build:
 override_dh_auto_install:
 	make -C $(CURDIR)/build-$(DEB_HOST_MULTIARCH) install \
 	INSTALL_ROOT=$(CURDIR)/debian/gxde-requ
+	mkdir -p $(CURDIR)/debian/gxde-requ/etc/gxde-k9/slimy/
+	install $(CURDIR)/k9/gxde-requ.slimy $(CURDIR)/debian/gxde-requ/etc/gxde-k9/slimy/
 
 # debmake generated override targets
 # Multiarch package requires library files to be installed to
