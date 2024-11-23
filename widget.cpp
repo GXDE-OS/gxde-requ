@@ -1,10 +1,12 @@
 #include "widget.h"
 #include <QDebug>
+#include <QScreen>
 
 Widget::Widget(QWidget *parent) : QWidget(parent)
 {
     //QDesktopWidget* pDesktopWidget = QApplication::desktop();
-    QRect screenRect = QApplication::desktop()->screenGeometry();
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenRect = screen->geometry();
     qaq = new QSettings(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/GXDE/gxde-requ/gxde-requ-setting.qaq",
                         QSettings::IniFormat);
     QString kwinrules;
@@ -17,12 +19,12 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
         kwinrules="ukui-kwinrulesrc";
     }
 
-    QFile *file = new QFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/" + kwinrules);
-    file->open(QFile::ReadOnly);
+    QFile file(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/" + kwinrules);
+    file.open(QFile::ReadOnly);
+    QString r = QLatin1String(file.readAll());
+    file.close();
 
-    QString r = QLatin1String(file->readAll());
-    file->close();
-    delete file;
+    QSettings tmp(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/" + kwinrules, QSettings::IniFormat);
     qDebug() << r;
     if(!r.contains("gxde-requ",Qt::CaseSensitive))
     {

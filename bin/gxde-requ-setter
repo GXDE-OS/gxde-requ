@@ -1,0 +1,128 @@
+#!/bin/bash
+
+# 配置文件路径
+CONFIG_FILE="$HOME/.config/GXDE/gxde-requ/gxde-requ-setting.qaq"
+
+# 检查配置文件是否存在
+if [ ! -f "$CONFIG_FILE" ]; then
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+    touch "$CONFIG_FILE"
+    echo "配置文件不存在，已创建空配置文件: $CONFIG_FILE"
+fi
+
+# 修改指定热角的Shell命令
+modify_hot_corner() {
+    local corner=$1
+    local command=$2
+    if [[ -z "$corner" || -z "$command" ]]; then
+        echo "使用错误：必须提供热角和命令！"
+        exit 1
+    fi
+    # 更新配置文件
+    sed -i "/^${corner}Shell=.*/d" "$CONFIG_FILE"
+    echo "${corner}Shell=${command}" >> "$CONFIG_FILE"
+    echo "已更新热角 $corner 对应的命令为: $command"
+}
+
+# 删除指定热角的Shell命令
+clear_hot_corner() {
+    local corner=$1
+    if [[ -z "$corner" ]]; then
+        echo "使用错误：必须提供热角！"
+        exit 1
+    fi
+    # 删除配置文件中的对应热角条目
+    sed -i "/^${corner}Shell=.*/d" "$CONFIG_FILE"
+    echo "已清除热角 $corner 的命令。"
+}
+
+# 图形化配置器
+show_gui() {
+    local choices=("TopLeft" "TopRight" "LowerLeft" "LowerRight")
+    local descriptions=(
+        "返回桌面"
+        "打开控制中心"
+        "打开启动器"
+        "所有窗口"
+        "快速黑屏"
+        "自定义"
+    )
+    local commands=(
+        "/usr/lib/deepin-daemon/desktop-toggle"
+        "dbus-send --print-reply --dest=com.deepin.dde.ControlCenter /com/deepin/dde/ControlCenter com.deepin.dde.ControlCenter.Toggle"
+        "dbus-send --print-reply --dest=com.deepin.dde.Launcher /com/deepin/dde/Launcher com.deepin.dde.Launcher.Toggle"
+        "dbus-send --session --dest=com.deepin.wm --print-reply /com/deepin/wm com.deepin.wm.PerformAction int32:6"
+        "sh -c \"sleep 0.5 && xset dpms force off\""
+        "自定义"
+    )
+
+    # 选择热角
+    local corner=$(zenity --list --title="选择热角" --column="热角" "${choices[@]}" --width=300 --height=250)
+    if [ -z "$corner" ]; then
+        echo "未选择热角，退出。"
+        exit 0
+    fi
+
+    # 操作选择
+    local action=$(zenity --list --title="选择操作" --column="操作" --width=300 --height=200 \
+        "设置用途" \
+        "清除用途")
+    if [ -z "$action" ]; then
+        echo "未选择操作，退出。"
+        exit 0
+    fi
+
+    if [ "$action" == "清除用途" ]; then
+        clear_hot_corner "$corner"
+        return
+    fi
+
+    # 选择用途
+    local selection=$(zenity --list --title="选择用途" --column="用途" --column="命令" \
+        "${descriptions[0]}" "${commands[0]}" \
+        "${descriptions[1]}" "${commands[1]}" \
+        "${descriptions[2]}" "${commands[2]}" \
+        "${descriptions[3]}" "${commands[3]}" \
+        "${descriptions[4]}" "${commands[4]}" \
+        "${descriptions[5]}" "${commands[5]}" \
+        --width=500 --height=300 --print-column=2)
+
+    if [ -z "$selection" ]; then
+        echo "未选择用途，退出。"
+        exit 0
+    fi
+
+    # 检查是否是自定义
+    if [ "$selection" == "自定义" ]; then
+        selection=$(zenity --entry --title="输入自定义命令" --text="请输入自定义命令：" --width=400)
+        if [ -z "$selection" ]; then
+            zenity --info --text="未输入自定义命令，退出。"
+            exit 0
+        fi
+    fi
+
+    # 更新配置文件
+    modify_hot_corner "$corner" "$selection"
+}
+
+# 主函数
+main() {
+    if [[ "$1" == "--gui" ]]; then
+        show_gui
+    elif [[ "$1" == "--set" ]]; then
+        modify_hot_corner "$2" "$3"
+    elif [[ "$1" == "--clear" ]]; then
+        clear_hot_corner "$2"
+    else
+        echo "用法："
+        echo "$0 --set <热角> <命令>    修改指定热角的命令"
+        echo "$0 --clear <热角>        清除指定热角的命令"
+        echo "$0 --gui                调出图形化配置器"
+        exit 1
+    fi
+}
+
+main "$@"
+killall gxde-requ
+# 需要重启以读取配置
+gxde-requ &
