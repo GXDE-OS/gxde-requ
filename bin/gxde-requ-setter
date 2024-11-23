@@ -87,6 +87,7 @@ show_gui() {
         "${descriptions[3]}" "${commands[3]}" \
         "${descriptions[4]}" "${commands[4]}" \
         "${descriptions[5]}" "${commands[5]}" \
+        "${descriptions[6]}" "${commands[6]}" \
         --width=500 --height=300 --print-column=2)
 
     if [ -z "$selection" ]; then
