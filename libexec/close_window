@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# 检查是否安装了xdotool和xprop
+if ! command -v xdotool &> /dev/null; then
+    echo "请安装 xdotool 后再运行此脚本。"
+    exit 1
+fi
+
+if ! command -v xprop &> /dev/null; then
+    echo "请安装 xprop 后再运行此脚本。"
+    exit 1
+fi
+
+# 获取当前最上层窗口的窗口ID
+WINDOW_ID=$(xdotool getactivewindow)
+
+# 检查是否成功获取窗口ID
+if [ -z "$WINDOW_ID" ]; then
+    echo "无法获取当前最上层窗口。"
+    exit 1
+fi
+
+# 获取窗口属性，检查是否最大化
+IS_MAXIMIZED=$(xprop -id "$WINDOW_ID" _NET_WM_STATE | grep -E '_NET_WM_STATE_MAXIMIZED_HORZ|_NET_WM_STATE_MAXIMIZED_VERT')
+
+if [ -n "$IS_MAXIMIZED" ]; then
+    # 如果窗口已最大化，发送关闭信号
+    WM_DELETE_WINDOW=$(xprop -id "$WINDOW_ID" | grep WM_PROTOCOLS | grep -o "WM_DELETE_WINDOW")
+    
+    if [ -n "$WM_DELETE_WINDOW" ]; then
+        # 发送关闭信号
+        xdotool windowactivate "$WINDOW_ID" key --clearmodifiers Alt+F4
+        echo "已发送关闭信号到最大化的窗口。"
+    else
+        echo "窗口不支持 WM_DELETE_WINDOW，无法发送关闭信号。"
+    fi
+else
+    echo "当前窗口未最大化，无需关闭。"
+fi
