@@ -80,9 +80,9 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
     if(obj == this) {
         if(event->type() == QEvent::HoverEnter) {
             mouseOnHotPlace = true;
-            qDebug() << "safsdf";
+            qDebug() << "Zone is Triggered";
             Timer->stop();
-            Timer->start(600);
+            Timer->start(200);
             Timer->setSingleShot(true);
             return true;
         } else if(event->type() == QEvent::HoverLeave){
