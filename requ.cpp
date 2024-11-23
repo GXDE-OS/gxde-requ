@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QProcess>
+#include <QHoverEvent>
 
 requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
 {
@@ -25,17 +26,18 @@ void requ::setShell(QString t)
 }
 void requ::runShell()
 {
-    QProcess *run = new QProcess;
-    run->startDetached(shell);
-    Timer->stop();  // 运行程序后停止 QTimer 以避免重复打开应用
+    QProcess::startDetached(shell);
+    Timer->stop(); // 停止定时器，避免重复触发
 }
 
-void requ::paintEvent(QPaintEvent*)
+
+void requ::paintEvent(QPaintEvent *)
 {
-    if (!mouseOnHotPlace || shell == "") {
-        // 如果鼠标不在热区上或者没有为该位置设置命令则不进行绘制
-        return;
+    if (!mouseOnHotPlace || shell.isEmpty()) {
+        return; // 热区未激活或未设置命令时不绘制
     }
+
+
     QPainter paint;
     paint.begin(this);
     // 计算圆心坐标
@@ -77,20 +79,49 @@ void requ::paintEvent(QPaintEvent*)
 
 bool requ::eventFilter(QObject *obj, QEvent *event)
 {
-    if(obj == this) {
-        if(event->type() == QEvent::HoverEnter) {
-            mouseOnHotPlace = true;
-            qDebug() << "Zone is Triggered";
-            Timer->stop();
-            Timer->start(200);
-            Timer->setSingleShot(true);
+    if (obj == this) {
+        if (event->type() == QEvent::HoverMove || event->type() == QEvent::HoverEnter) {
+            auto hoverEvent = static_cast<QHoverEvent *>(event);
+            QPoint cursorPos = hoverEvent->pos(); // 获取鼠标位置
+
+            // 定义热区范围
+            int hotZoneSize = 2; // 热区大小
+            QRect hotZone;
+            switch (showPlace) {
+            case Place::TopLeft:
+                hotZone = QRect(0, 0, hotZoneSize, hotZoneSize);
+                break;
+            case Place::TopRight:
+                hotZone = QRect(width() - hotZoneSize, 0, hotZoneSize, hotZoneSize);
+                break;
+            case Place::LowerLeft:
+                hotZone = QRect(0, height() - hotZoneSize, hotZoneSize, hotZoneSize);
+                break;
+            case Place::LowerRight:
+                hotZone = QRect(width() - hotZoneSize, height() - hotZoneSize, hotZoneSize, hotZoneSize);
+                break;
+            }
+
+            if (hotZone.contains(cursorPos)) {
+                if (!mouseOnHotPlace) {
+                    mouseOnHotPlace = true;
+                    qDebug() << "Hot zone triggered!";
+                    Timer->stop();
+                    Timer->start(200);
+                    Timer->setSingleShot(true);
+                }
+            } else {
+                mouseOnHotPlace = false;
+                Timer->stop();
+            }
+
+            update(); // 触发绘制更新动画
             return true;
-        } else if(event->type() == QEvent::HoverLeave){
+        } else if (event->type() == QEvent::HoverLeave) {
             mouseOnHotPlace = false;
             Timer->stop();
-
+            update(); // 鼠标离开时更新动画状态
         }
     }
-    update();  // 重新绘制窗口以显示/关闭动画
     return QWidget::eventFilter(obj, event);
 }
