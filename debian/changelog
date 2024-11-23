@@ -1,6 +1,10 @@
-gxde-requ (1.2.0) UNRELEASED; urgency=low
+gxde-requ (1.2.1) UNRELEASED; urgency=low
 
+  [ gfdgd_xi ]
   * Support GXDE k9 watchdog
   * 修复一些问题（https://gitee.com/GXDE-OS/gxde-requ/issues/IB6KZN  https://gitee.com/GXDE-OS/gxde-requ/issues/IB6JIT ）
 
- -- gfdgd_xi <3025613752@qq.com>  Sat, 23 Nov 2024 22:54:32 +0800
+  [ shenmo ]
+  * feat: Support Close Window
+
+ -- shenmo <shenmo@spark-app.store>  Sat, 23 Nov 2024 22:54:32 +0800
