@@ -52,7 +52,7 @@ show_gui() {
         "dbus-send --print-reply --dest=com.deepin.dde.ControlCenter /com/deepin/dde/ControlCenter com.deepin.dde.ControlCenter.Toggle"
         "dbus-send --print-reply --dest=com.deepin.dde.Launcher /com/deepin/dde/Launcher com.deepin.dde.Launcher.Toggle"
         "dbus-send --session --dest=com.deepin.wm --print-reply /com/deepin/wm com.deepin.wm.PerformAction int32:6"
-        "sh -c \"sleep 0.5 && xset dpms force off\""
+        "xset dpms force off"
         "自定义"
     )
 
