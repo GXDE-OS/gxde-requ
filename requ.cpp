@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QProcess>
 #include <QHoverEvent>
+#include <QGuiApplication>
+#include <QScreen>
 
 requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
 {
@@ -14,16 +16,57 @@ requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
     this->setAttribute(Qt::WA_X11DoNotAcceptFocus);
-    this->setWindowFlags(Qt::WindowDoesNotAcceptFocus);
+    // 设置 Qt::X11BypassWindowManagerHint 以不被 gxde-top-panel 和 dde-dock 干扰
+    this->setWindowFlags(Qt::WindowDoesNotAcceptFocus | Qt::X11BypassWindowManagerHint);
     //this->setWindowOpacity(0.5);
     this->raise();
-    setFixedSize(WIDGET_WIDTH, WIDGET_WIDTH);
+    resizeWindow(whereIsShow);
     setMaximumSize(WIDGET_WIDTH, WIDGET_WIDTH);
+    if (whereIsShow == Place::TopLeft) {
+        QTimer *timer = new QTimer();
+        connect(timer, &QTimer::timeout, [this](){qDebug() << geometry();});
+        timer->setInterval(100);
+        timer->start();
+    }
 }
+
+void requ::resizeWindow(Place where) {
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenRect = screen->geometry();
+
+    int searchWidth = 10;
+    if (mouseOnHotPlace) {
+        searchWidth = WIDGET_WIDTH;
+    }
+
+    setFixedSize(searchWidth, searchWidth);
+    switch (where) {
+    case Place::LowerLeft:
+        setGeometry(0, screenRect.height() - searchWidth, searchWidth, searchWidth);
+        break;
+    case Place::LowerRight:
+        setGeometry(screenRect.width() - searchWidth,
+                    screenRect.height() - searchWidth,
+                    searchWidth,
+                    searchWidth);
+        break;
+    case Place::TopLeft:
+        setGeometry(0, 0, searchWidth, searchWidth);
+        break;
+    case Place::TopRight:
+        setGeometry(screenRect.width() - searchWidth, 0, searchWidth, searchWidth);
+        break;
+    }
+
+
+    update();
+}
+
 void requ::setShell(QString t)
 {
     shell=t;
 }
+
 void requ::runShell()
 {
     QProcess::startDetached(shell);
@@ -79,6 +122,7 @@ void requ::paintEvent(QPaintEvent *)
 
 bool requ::eventFilter(QObject *obj, QEvent *event)
 {
+    qDebug() << event->type();
     if (obj == this) {
         if (event->type() == QEvent::HoverMove || event->type() == QEvent::HoverEnter) {
             auto hoverEvent = static_cast<QHoverEvent *>(event);
@@ -105,6 +149,7 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
             if (hotZone.contains(cursorPos)) {
                 if (!mouseOnHotPlace) {
                     mouseOnHotPlace = true;
+                    resizeWindow(showPlace);
                     qDebug() << "Hot zone triggered!";
                     Timer->stop();
                     Timer->start(200);
@@ -112,6 +157,7 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
                 }
             } else {
                 mouseOnHotPlace = false;
+                resizeWindow(showPlace);
                 Timer->stop();
             }
 
@@ -119,6 +165,7 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
             return true;
         } else if (event->type() == QEvent::HoverLeave) {
             mouseOnHotPlace = false;
+            resizeWindow(showPlace);
             Timer->stop();
             update(); // 鼠标离开时更新动画状态
         }

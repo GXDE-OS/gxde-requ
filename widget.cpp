@@ -45,13 +45,13 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
     LowerLeft->setShell(qaq->value("LowerLeftShell").toString());
     LowerRight->setShell(qaq->value("LowerRightShell").toString());
 
-    TopLeft->setGeometry(0, 0, 1, 1);
-    TopRight->setGeometry(screenRect.width() - WIDGET_WIDTH, 0, 1, 1);
-    LowerLeft->setGeometry(0, screenRect.height() - WIDGET_WIDTH, 1, 1);
-    LowerRight->setGeometry(screenRect.width() - WIDGET_WIDTH,
+    //TopLeft->setGeometry(0, 0, 1, 1);
+    //TopRight->setGeometry(screenRect.width() - WIDGET_WIDTH, 0, 1, 1);
+    //LowerLeft->setGeometry(0, screenRect.height() - WIDGET_WIDTH, 1, 1);
+    /*LowerRight->setGeometry(screenRect.width() - WIDGET_WIDTH,
                             screenRect.height() - WIDGET_WIDTH,
                             1,
-                            1);
+                            1);*/
     TopLeft->show();
     TopRight->show();
     LowerLeft->show();

@@ -21,7 +21,7 @@ public:
     explicit requ(Place whereIsShow, QWidget *parent = nullptr);
     void setShell(QString t);
 
-
+    void resizeWindow(Place where);
 
 private:
     QTimer *Timer = new QTimer;
@@ -30,9 +30,17 @@ private:
     bool mouseOnHotPlace = false;
 
     void paintEvent(QPaintEvent* paint);
+    /*void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void transMouseEvents(QMouseEvent *event);*/
+
 signals:
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
+
 public slots:
     void runShell();
 };
