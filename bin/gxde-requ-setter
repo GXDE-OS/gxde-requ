@@ -46,6 +46,7 @@ show_gui() {
         "打开启动器"
         "所有窗口"
         "快速黑屏"
+        "关闭窗口"
         "自定义"
     )
     local commands=(
@@ -54,6 +55,7 @@ show_gui() {
         "dbus-send --print-reply --dest=com.deepin.dde.Launcher /com/deepin/dde/Launcher com.deepin.dde.Launcher.Toggle"
         "dbus-send --session --dest=com.deepin.wm --print-reply /com/deepin/wm com.deepin.wm.PerformAction int32:6"
         "xset dpms force off"
+        "/usr/libexec/gxde-requ/bin/close_window"
         "自定义"
     )
 
@@ -86,6 +88,7 @@ show_gui() {
         "${descriptions[3]}" "${commands[3]}" \
         "${descriptions[4]}" "${commands[4]}" \
         "${descriptions[5]}" "${commands[5]}" \
+        "${descriptions[6]}" "${commands[6]}" \
         --width=500 --height=300 --print-column=2)
 
     if [ -z "$selection" ]; then
