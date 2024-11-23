@@ -13,7 +13,8 @@ fi
 # 修改指定热角的Shell命令
 modify_hot_corner() {
     local corner=$1
-    local command=$2
+    # ini 需要转义 " 号
+    local command=${2//\"/\\\"}
     if [[ -z "$corner" || -z "$command" ]]; then
         echo "使用错误：必须提供热角和命令！"
         exit 1
