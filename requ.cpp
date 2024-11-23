@@ -31,7 +31,7 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
         if(event->type() == QEvent::HoverEnter) {
                 qDebug()<<"safsdf";
                 Timer->stop();
-                Timer->start(400);
+                Timer->start(200);
                 Timer->setSingleShot(true);
                 return true;
         }else if(event->type()== QEvent::HoverLeave){

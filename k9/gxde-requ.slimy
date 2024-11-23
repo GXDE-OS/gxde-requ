@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# slimy watchdog script
+# 功能：监控目标进程，若退出则重启，同时清理无效的 PID 文件。
+
+# ============ 可配置变量 ============
+
+# 目标程序路径（需要运行的可执行文件）
+TARGET_PROCESS="gxde-requ"
+
+# PID 文件目录（从环境变量 PID_DIR 获取，默认为 /var/run）
+PID_DIR="${PID_DIR:-$HOME/.config/GXDE/gxde-k9/}"
+
+# 自动生成 PROCESS_NAME 为当前 .slimy 文件名（去掉扩展名）
+PROCESS_NAME=$(basename "$0" .slimy)
+
+# ============ 脚本逻辑 ============
+
+# 生成 PID 文件路径
+PID_FILE="$PID_DIR/$PROCESS_NAME.pid"
+
+# 检查 PID 文件是否存在且有效
+if [[ -f "$PID_FILE" ]]; then
+    PID=$(cat "$PID_FILE")
+    if ! kill -0 "$PID" 2>/dev/null; then
+        echo "[$PROCESS_NAME] 无效的 PID 文件，清理：$PID_FILE"
+        rm -f "$PID_FILE"
+    fi
+fi
+
+# 如果 PID 文件不存在，启动目标进程
+if [[ ! -f "$PID_FILE" ]]; then
+    echo "[$PROCESS_NAME] 目标进程未运行，正在启动：$TARGET_PROCESS"
+    "$TARGET_PROCESS" &
+    echo $! > "$PID_FILE"
+else
+    #echo "[$PROCESS_NAME] 目标进程正在运行，PID 文件路径：$PID_FILE"
+    true
+fi
+

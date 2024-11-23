@@ -1,6 +1,5 @@
-dde-requ (1.0.0) UNRELEASED; urgency=low
+gxde-requ (1.1.0) UNRELEASED; urgency=low
 
-  * Initial release. Closes: #nnnn
-    <nnnn is the bug number of your ITP>
+  * Support GXDE k9 watchdog
 
- --  <>  Tue, 24 Sep 2024 00:41:12 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 05 Oct 2024 09:17:44 +0800
