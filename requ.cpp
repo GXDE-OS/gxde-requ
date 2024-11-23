@@ -18,23 +18,16 @@ requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
     this->setAttribute(Qt::WA_X11DoNotAcceptFocus);
     // 设置 Qt::X11BypassWindowManagerHint 以不被 gxde-top-panel 和 dde-dock 干扰
     this->setWindowFlags(Qt::WindowDoesNotAcceptFocus | Qt::X11BypassWindowManagerHint);
-    //this->setWindowOpacity(0.5);
     this->raise();
     resizeWindow(whereIsShow);
     setMaximumSize(WIDGET_WIDTH, WIDGET_WIDTH);
-    if (whereIsShow == Place::TopLeft) {
-        QTimer *timer = new QTimer();
-        connect(timer, &QTimer::timeout, [this](){qDebug() << geometry();});
-        timer->setInterval(100);
-        timer->start();
-    }
 }
 
 void requ::resizeWindow(Place where) {
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenRect = screen->geometry();
 
-    int searchWidth = 10;
+    int searchWidth = WIDGET_SEARCH_WIDTH;
     if (mouseOnHotPlace) {
         searchWidth = WIDGET_WIDTH;
     }
@@ -122,7 +115,6 @@ void requ::paintEvent(QPaintEvent *)
 
 bool requ::eventFilter(QObject *obj, QEvent *event)
 {
-    qDebug() << event->type();
     if (obj == this) {
         if (event->type() == QEvent::HoverMove || event->type() == QEvent::HoverEnter) {
             auto hoverEvent = static_cast<QHoverEvent *>(event);

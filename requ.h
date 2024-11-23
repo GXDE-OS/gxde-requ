@@ -6,7 +6,9 @@
 #include <QTimer>
 #include <QProcess>
 #include <QCoreApplication>
+
 #define WIDGET_WIDTH 30
+#define WIDGET_SEARCH_WIDTH 5
 
 class requ : public QWidget
 {
@@ -30,11 +32,6 @@ private:
     bool mouseOnHotPlace = false;
 
     void paintEvent(QPaintEvent* paint);
-    /*void mouseMoveEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseDoubleClickEvent(QMouseEvent *event);
-    void transMouseEvents(QMouseEvent *event);*/
 
 signals:
 
