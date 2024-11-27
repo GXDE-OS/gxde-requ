@@ -24,7 +24,8 @@ if [[ -x "$TARGET_PROCESS" ]]; then
     TARGET_PROCESS=$(realpath "$TARGET_PROCESS" 2>/dev/null || echo "$TARGET_PROCESS")
 else
     # 如果不是文件，认为是启动指令
-    echo "[$PROCESS_NAME] 未找到文件，将使用命令：$TARGET_PROCESS"
+#    echo "[$PROCESS_NAME] 未找到文件，将使用命令：$TARGET_PROCESS"
+    true
 fi
 
 # 确保 PID 文件目录存在
@@ -55,7 +56,7 @@ if [[ -f "$PID_FILE" ]]; then
             fi
         else
             # 如果是命令，简单校验 PID 是否存活
-            echo "[$PROCESS_NAME] 检测到命令进程，PID: $PID 正在运行。"
+#            echo "[$PROCESS_NAME] 检测到命令进程，PID: $PID 正在运行。"
             exit 0
         fi
     else
