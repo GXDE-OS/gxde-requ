@@ -46,7 +46,7 @@ if [[ -f "$PID_FILE" ]]; then
             # 如果是可执行文件，通过 /proc/$PID/exe 检查路径
             PROCESS_PATH=$(readlink -f "/proc/$PID/exe" 2>/dev/null)
             if [[ "$PROCESS_PATH" == "$TARGET_PROCESS" ]]; then
-                echo "[$PROCESS_NAME] 目标进程正在运行，PID: $PID"
+ #               echo "[$PROCESS_NAME] 目标进程正在运行，PID: $PID"
                 exit 0
             else
                 echo "[$PROCESS_NAME] 无效的 PID 文件，进程路径不匹配。"
