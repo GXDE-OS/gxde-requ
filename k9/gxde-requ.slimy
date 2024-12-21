@@ -5,10 +5,12 @@
 
 # ============ 可配置变量 ============
 
-# 目标程序路径（需要运行的可执行文件）
+# 目标程序路径（需要运行的可执行文件或命令）
 TARGET_PROCESS="gxde-requ"
 
-# PID 文件目录（从环境变量 PID_DIR 获取，默认为 /var/run）
+# ====== 若无特殊需求，以下请默认 =======
+
+# PID 文件目录（从环境变量 PID_DIR 获取，默认为用户配置目录）
 PID_DIR="${PID_DIR:-$HOME/.config/GXDE/gxde-k9/}"
 
 # 自动生成 PROCESS_NAME 为当前 .slimy 文件名（去掉扩展名）
@@ -16,25 +18,61 @@ PROCESS_NAME=$(basename "$0" .slimy)
 
 # ============ 脚本逻辑 ============
 
+# 检查目标程序路径是否存在且可执行
+if [[ -x "$TARGET_PROCESS" ]]; then
+    # 如果是有效的可执行文件，使用 realpath 获取绝对路径
+    TARGET_PROCESS=$(realpath "$TARGET_PROCESS" 2>/dev/null || echo "$TARGET_PROCESS")
+else
+    # 如果不是文件，认为是启动指令
+#    echo "[$PROCESS_NAME] 未找到文件，将使用命令：$TARGET_PROCESS"
+    true
+fi
+
+# 确保 PID 文件目录存在
+mkdir -p "$PID_DIR" || {
+    echo "[$PROCESS_NAME] 错误：无法创建 PID 文件目录 $PID_DIR！"
+    exit 1
+}
+
 # 生成 PID 文件路径
 PID_FILE="$PID_DIR/$PROCESS_NAME.pid"
 
 # 检查 PID 文件是否存在且有效
 if [[ -f "$PID_FILE" ]]; then
-    PID=$(cat "$PID_FILE")
-    if ! kill -0 "$PID" 2>/dev/null; then
+    PID=$(cat "$PID_FILE" 2>/dev/null)
+    if [[ -n "$PID" && -e "/proc/$PID" ]]; then
+        # 检查进程路径是否匹配
+        if [[ -x "$TARGET_PROCESS" ]]; then
+            # 如果是可执行文件，通过 /proc/$PID/exe 检查路径
+            PROCESS_PATH=$(readlink -f "/proc/$PID/exe" 2>/dev/null)
+            if [[ "$PROCESS_PATH" == "$TARGET_PROCESS" ]]; then
+ #               echo "[$PROCESS_NAME] 目标进程正在运行，PID: $PID"
+                exit 0
+            else
+                echo "[$PROCESS_NAME] 无效的 PID 文件，进程路径不匹配。"
+                echo "[$PROCESS_NAME] 文件记录的路径: $PROCESS_PATH"
+                echo "[$PROCESS_NAME] 目标路径: $TARGET_PROCESS"
+                rm -f "$PID_FILE"
+            fi
+        else
+            # 如果是命令，简单校验 PID 是否存活
+#            echo "[$PROCESS_NAME] 检测到命令进程，PID: $PID 正在运行。"
+            exit 0
+        fi
+    else
         echo "[$PROCESS_NAME] 无效的 PID 文件，清理：$PID_FILE"
         rm -f "$PID_FILE"
     fi
 fi
 
-# 如果 PID 文件不存在，启动目标进程
-if [[ ! -f "$PID_FILE" ]]; then
-    echo "[$PROCESS_NAME] 目标进程未运行，正在启动：$TARGET_PROCESS"
-    "$TARGET_PROCESS" &
-    echo $! > "$PID_FILE"
+# 如果 PID 文件不存在或无效，启动目标进程
+echo "[$PROCESS_NAME] 目标进程未运行，正在启动：$TARGET_PROCESS"
+"$TARGET_PROCESS" &
+NEW_PID=$!
+if [[ -n "$NEW_PID" && -e "/proc/$NEW_PID" ]]; then
+    echo "$NEW_PID" > "$PID_FILE"
+    echo "[$PROCESS_NAME] 目标进程启动成功，PID: $NEW_PID"
 else
-    #echo "[$PROCESS_NAME] 目标进程正在运行，PID 文件路径：$PID_FILE"
-    true
+    echo "[$PROCESS_NAME] 错误：目标进程启动失败！"
+    exit 1
 fi
-
