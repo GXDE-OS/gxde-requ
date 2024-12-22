@@ -5,6 +5,9 @@
 #-------------------------------------------------
 
 QT       += core gui
+linux {
+    QT       += dbus
+}
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

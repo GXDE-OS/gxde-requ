@@ -6,6 +6,10 @@
 #include <QGuiApplication>
 #include <QScreen>
 
+#ifdef Q_OS_LINUX
+#include <QDBusInterface>
+#endif
+
 requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
 {
     showPlace = whereIsShow;
@@ -21,6 +25,17 @@ requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
     this->raise();
     resizeWindow(whereIsShow);
     setMaximumSize(WIDGET_WIDTH, WIDGET_WIDTH);
+
+#ifdef Q_OS_LINUX  // 此部分只支持 Linux
+    // 使用 dbus 判断是否支持透明背景
+    QDBusInterface dbus("com.deepin.wm",
+                        "/com/deepin/wm",
+                        "com.deepin.wm");
+    // 因为非 GXDE 未必有该dbus,所以必须保证这个接口存在才修改
+    if (dbus.property("compositingEnabled").isValid()) {
+        m_supportTransport = dbus.property("compositingEnabled").toBool();
+    }
+#endif
 }
 
 void requ::resizeWindow(Place where) {
@@ -28,11 +43,16 @@ void requ::resizeWindow(Place where) {
     QRect screenRect = screen->geometry();
 
     int searchWidth = WIDGET_SEARCH_WIDTH;
-    if (mouseOnHotPlace) {
+    if (mouseOnHotPlace && m_supportTransport) {
         searchWidth = WIDGET_WIDTH;
     }
-
-    setFixedSize(searchWidth, searchWidth);
+    if (!shell.isEmpty()) {
+        setFixedSize(searchWidth, searchWidth); // 热区未激活或未设置命令时不修改窗口大小
+        show();
+    }
+    else {
+        hide();
+    }
     switch (where) {
     case Place::LowerLeft:
         setGeometry(0, screenRect.height() - searchWidth, searchWidth, searchWidth);
@@ -57,11 +77,18 @@ void requ::resizeWindow(Place where) {
 
 void requ::setShell(QString t)
 {
-    shell=t;
+    shell = t;
+    if (t.replace(" ", "").replace("\n", "") == "") {
+        // 如果没有设置触发命令则不显示窗口
+        hide();
+        return;
+    }
+    show();
 }
 
 void requ::runShell()
 {
+    qDebug() << shell;
     QProcess::startDetached(shell);
     Timer->stop(); // 停止定时器，避免重复触发
 }
@@ -69,7 +96,7 @@ void requ::runShell()
 
 void requ::paintEvent(QPaintEvent *)
 {
-    if (!mouseOnHotPlace || shell.isEmpty()) {
+    if (!mouseOnHotPlace || shell.isEmpty() || !m_supportTransport) {
         return; // 热区未激活或未设置命令时不绘制
     }
 

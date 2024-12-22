@@ -8,7 +8,7 @@
 #include <QCoreApplication>
 
 #define WIDGET_WIDTH 30
-#define WIDGET_SEARCH_WIDTH 5
+#define WIDGET_SEARCH_WIDTH 2
 
 class requ : public QWidget
 {
@@ -30,6 +30,7 @@ private:
     QString shell;
     Place showPlace;
     bool mouseOnHotPlace = false;
+    bool m_supportTransport = true;
 
     void paintEvent(QPaintEvent* paint);
 
