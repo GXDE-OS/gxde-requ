@@ -27,6 +27,18 @@ requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
     setMaximumSize(WIDGET_WIDTH, WIDGET_WIDTH);
 
 #ifdef Q_OS_LINUX  // 此部分只支持 Linux
+    setTransportFlat();
+    QTimer *timer = new QTimer();
+    timer->setInterval(1000);
+    connect(timer, &QTimer::timeout, this, [this](){
+        setTransportFlat();
+    });
+    timer->start();
+#endif
+}
+
+void requ::setTransportFlat()
+{
     // 使用 dbus 判断是否支持透明背景
     QDBusInterface dbus("com.deepin.wm",
                         "/com/deepin/wm",
@@ -34,11 +46,13 @@ requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
     // 因为非 GXDE 未必有该dbus,所以必须保证这个接口存在才修改
     if (dbus.property("compositingEnabled").isValid()) {
         m_supportTransport = dbus.property("compositingEnabled").toBool();
+        return;
     }
-#endif
+    m_supportTransport = true;
 }
 
-void requ::resizeWindow(Place where) {
+void requ::resizeWindow(Place where)
+{
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenRect = screen->geometry();
 

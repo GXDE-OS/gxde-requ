@@ -24,6 +24,7 @@ public:
     void setShell(QString t);
 
     void resizeWindow(Place where);
+    void setTransportFlat();
 
 private:
     QTimer *Timer = new QTimer;
