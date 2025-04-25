@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# 目标程序路径（需要运行的可执行文件或命令）
+TARGET_PROCESS="/usr/bin/gxde-requ"
+# 需要如果 systemd 正在运行就不执行的话，请填写任意字符来启用
+# 如启用，若检测到 systemd 正在运行，则直接退出脚本。若不启用则会不检测，继续执行
+DONT_RUN_IF_SYSTEMD_EXIST=""

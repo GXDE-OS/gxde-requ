@@ -1,7 +1,7 @@
-gxde-requ (1.2.4) UNRELEASED; urgency=low
+gxde-requ (1.3.0) UNRELEASED; urgency=low
 
   [ gfdgd_xi ]
-  * Support GXDE k9 watchdog
+  * use GXDE k9 edging
   * 修复一些问题（https://gitee.com/GXDE-OS/gxde-requ/issues/IB6KZN  https://gitee.com/GXDE-OS/gxde-requ/issues/IB6JIT ）
   * 修复"符号的转义问题
   * 优化非特效模式下的显示效果

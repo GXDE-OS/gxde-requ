@@ -13,6 +13,6 @@ Multi-Arch: foreign
 Replaces: dde-requ
 Provides: dde-requ
 Conflicts: dde-requ
-Depends: ${misc:Depends}, ${shlibs:Depends}, gxde-k9(>=1.3.0), xdotool, x11-utils
+Depends: ${misc:Depends}, ${shlibs:Depends}, gxde-k9(>=1.6.0), xdotool, x11-utils
 Description: A tool to start 热区
  A tool to start 热区
