@@ -43,6 +43,8 @@ include /usr/share/dpkg/default.mk
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
+export QT_SELECT=qt5
+
 # main packaging script based on post dh7 syntax
 %:
 	dh $@
