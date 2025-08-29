@@ -1,8 +1,15 @@
 Source: gxde-requ
 Section: utils
 Priority: optional
-Maintainer:  shenmo<shenmo@spark-app.store>
-Build-Depends: debhelper-compat (= 13), qt5-qmake, qttools5-dev-tools,  qt5-default | qtbase5-dev, qtchooser
+Maintainer: gfdgd_xi <3025613752@qq.com>
+Build-Depends:
+ debhelper-compat (= 13), 
+ qt6-base-dev,
+ qt6-base-dev-tools,
+ qt6-base-private-dev,
+ qt6-tools-dev-tools,
+ qt6-5compat-dev,
+ cmake,
 Standards-Version: 4.5.1
 Homepage: https://gitee.com/GXDE-OS/gxde-requ
 Rules-Requires-Root: no
@@ -13,6 +20,6 @@ Multi-Arch: foreign
 Replaces: dde-requ
 Provides: dde-requ
 Conflicts: dde-requ
-Depends: ${misc:Depends}, ${shlibs:Depends}, gxde-k9(>=1.6.0), xdotool, x11-utils
-Description: A tool to start 热区
- A tool to start 热区
+Depends: ${misc:Depends}, ${shlibs:Depends}, gxde-k9 (>=1.6.0), xdotool, x11-utils
+Description: A tool to start GXDE 热区
+ A tool to start GXDE 热区

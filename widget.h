@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QSettings>
-#include <QDesktopWidget>
 #include <QApplication>
 #include <requ.h>
 #include <QFile>
