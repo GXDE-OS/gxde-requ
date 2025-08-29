@@ -39,10 +39,16 @@ if((QT_VERSION_MAJOR GREATER 4))
     )
 endif()
 
+install(FILES k9/gxde-requ.edging DESTINATION ${CMAKE_INSTALL_BINDIR}/../share/gxde-k9/edging)
+install(FILES bin/gxde-requ-setter DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES libexec/close_window DESTINATION ${CMAKE_INSTALL_BINDIR}/../libexec/gxde-requ/bin)
+
+
 install(TARGETS gxde-requ
     BUNDLE DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
 
 # Consider using qt_generate_deploy_app_script() for app deployment if
 # the project can use Qt 6.3. In that case rerun qmake2cmake with

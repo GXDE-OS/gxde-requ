@@ -1,4 +1,4 @@
-gxde-requ (1.4.0) UNRELEASED; urgency=low
+gxde-requ (1.4.1) UNRELEASED; urgency=low
 
   [ gfdgd_xi ]
   * use GXDE k9 edging
@@ -8,8 +8,9 @@ gxde-requ (1.4.0) UNRELEASED; urgency=low
   * 支持开启/关闭特效模式时开启/关闭动画效果
   * 基于 Qt6 构建
   * 使用 cmake 而非 qmake
+  * 修复因 ruls 编写异常导致构建错误的问题
 
   [ shenmo ]
   * feat: Support Close Window
 
- -- gfdgd_xi <3025613752@qq.com>  Fri, 29 Aug 2025 22:04:27 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Fri, 29 Aug 2025 23:03:49 +0800

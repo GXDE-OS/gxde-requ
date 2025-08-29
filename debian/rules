@@ -40,32 +40,10 @@ export DH_VERBOSE = 1
 # These are rarely used code. (END)
 #
 include /usr/share/dpkg/default.mk
-DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
-DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
-
-export QT_SELECT=qt5
 
 # main packaging script based on post dh7 syntax
 %:
 	dh $@
-override_dh_auto_clean:
-	rm -rf $(CURDIR)/build-$(DEB_HOST_MULTIARCH)
-
-override_dh_auto_configure:
-	mkdir -p $(CURDIR)/build-$(DEB_HOST_MULTIARCH)
-
-	qmake BUILD_VERSION=$(DEB_VERSION_UPSTREAM) $(CURDIR)/gxde-requ.pro \
-	-o $(CURDIR)/build-$(DEB_HOST_MULTIARCH)/
-override_dh_auto_build:
-	make -C $(CURDIR)/build-$(DEB_HOST_MULTIARCH) -j$(JOBS)
-override_dh_auto_install:
-	make -C $(CURDIR)/build-$(DEB_HOST_MULTIARCH) install \
-	INSTALL_ROOT=$(CURDIR)/debian/gxde-requ
-	mkdir -p $(CURDIR)/debian/gxde-requ/usr/share/gxde-k9/edging
-	mkdir -p $(CURDIR)/debian/gxde-requ/usr/libexec/gxde-requ/bin/
-	install $(CURDIR)/k9/gxde-requ.edging $(CURDIR)/debian/gxde-requ/usr/share/gxde-k9/edging
-	install $(CURDIR)/bin/gxde-requ-setter $(CURDIR)/debian/gxde-requ/usr/bin/
-	install $(CURDIR)/libexec/close_window $(CURDIR)/debian/gxde-requ/usr/libexec/gxde-requ/bin/
 
 # debmake generated override targets
 # Multiarch package requires library files to be installed to
