@@ -103,7 +103,7 @@ void requ::setShell(QString t)
 void requ::runShell()
 {
     qDebug() << shell;
-    QProcess::startDetached(shell);
+    QProcess::startDetached("bash", QStringList() << "-c" << shell);
     Timer->stop(); // 停止定时器，避免重复触发
 }
 
@@ -196,11 +196,6 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
 
             update(); // 触发绘制更新动画
             return true;
-        } else if (event->type() == QEvent::HoverLeave) {
-            mouseOnHotPlace = false;
-            resizeWindow(showPlace);
-            Timer->stop();
-            update(); // 鼠标离开时更新动画状态
         }
     }
     return QWidget::eventFilter(obj, event);
