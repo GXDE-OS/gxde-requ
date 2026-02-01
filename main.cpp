@@ -6,7 +6,9 @@ int main(int argc, char *argv[])
     qputenv("QT_QPA_PLATFORM", "xcb");
 
     QApplication a(argc, argv);
-    Widget w;
+    for (QScreen *screen: QGuiApplication::screens()) {
+        new Widget(screen);
+    }
 
     return a.exec();
 }

@@ -1,4 +1,4 @@
-gxde-requ (1.4.2) UNRELEASED; urgency=low
+gxde-requ (1.4.3) UNRELEASED; urgency=low
 
   [ gfdgd_xi ]
   * use GXDE k9 edging
@@ -10,8 +10,9 @@ gxde-requ (1.4.2) UNRELEASED; urgency=low
   * 使用 cmake 而非 qmake
   * 修复因 ruls 编写异常导致构建错误的问题
   * 修复热区无法正常触发的问题（https://gitee.com/GXDE-OS/GXDE/issues/ICW2NY ）
+  * 新增多屏幕适配
 
   [ shenmo ]
   * feat: Support Close Window
 
- -- gfdgd_xi <3025613752@qq.com>  Sun, 16 Nov 2025 11:33:15 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sun, 01 Feb 2026 09:33:36 +0800

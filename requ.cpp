@@ -10,8 +10,9 @@
 #include <QDBusInterface>
 #endif
 
-requ::requ(Place whereIsShow, QWidget *parent) : QWidget(parent)
+requ::requ(QScreen *screen, Place whereIsShow, QWidget *parent) : QWidget(parent)
 {
+    m_screen = screen;
     showPlace = whereIsShow;
     connect(Timer, SIGNAL(timeout()), this, SLOT(runShell()));
     this->setAttribute(Qt::WA_Hover,true);
@@ -53,7 +54,7 @@ void requ::setTransportFlat()
 
 void requ::resizeWindow(Place where)
 {
-    QScreen *screen = QGuiApplication::primaryScreen();
+    QScreen *screen = m_screen;
     QRect screenRect = screen->geometry();
 
     int searchWidth = WIDGET_SEARCH_WIDTH;
@@ -69,19 +70,28 @@ void requ::resizeWindow(Place where)
     }
     switch (where) {
     case Place::LowerLeft:
-        setGeometry(0, screenRect.height() - searchWidth, searchWidth, searchWidth);
+        setGeometry(screenRect.x(),
+                    screenRect.y() + screenRect.height() - searchWidth,
+                    searchWidth,
+                    searchWidth);
         break;
     case Place::LowerRight:
-        setGeometry(screenRect.width() - searchWidth,
-                    screenRect.height() - searchWidth,
+        setGeometry(screenRect.x() + screenRect.width() - searchWidth,
+                    screenRect.y() + screenRect.height() - searchWidth,
                     searchWidth,
                     searchWidth);
         break;
     case Place::TopLeft:
-        setGeometry(0, 0, searchWidth, searchWidth);
+        setGeometry(screenRect.x(),
+                    screenRect.y(),
+                    searchWidth,
+                    searchWidth);
         break;
     case Place::TopRight:
-        setGeometry(screenRect.width() - searchWidth, 0, searchWidth, searchWidth);
+        setGeometry(screenRect.x() + screenRect.width() - searchWidth,
+                    screenRect.y(),
+                    searchWidth,
+                    searchWidth);
         break;
     }
 

@@ -2,11 +2,13 @@
 #include <QDebug>
 #include <QScreen>
 
-Widget::Widget(QWidget *parent) : QWidget(parent)
+Widget::Widget(QScreen *screen, QWidget *parent) : QWidget(parent)
 {
-    //QDesktopWidget* pDesktopWidget = QApplication::desktop();
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect screenRect = screen->geometry();
+    TopLeft = new requ(screen, requ::TopLeft);
+    TopRight = new requ(screen, requ::TopRight);
+    LowerLeft = new requ(screen, requ::LowerLeft);
+    LowerRight = new requ(screen, requ::LowerRight);
+
     qaq = new QSettings(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/GXDE/gxde-requ/gxde-requ-setting.qaq",
                         QSettings::IniFormat);
     QString kwinrules;
@@ -61,4 +63,11 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
     TopRight->show();
     LowerLeft->show();
     LowerRight->show();
+}
+
+Widget::~Widget() {
+    delete TopLeft;
+    delete TopRight;
+    delete LowerLeft;
+    delete LowerRight;
 }

@@ -20,7 +20,7 @@ public:
         LowerLeft,
         LowerRight
     };
-    explicit requ(Place whereIsShow, QWidget *parent = nullptr);
+    explicit requ(QScreen *screen, Place whereIsShow, QWidget *parent = nullptr);
     void setShell(QString t);
 
     void resizeWindow(Place where);
@@ -30,6 +30,7 @@ private:
     QTimer *Timer = new QTimer;
     QString shell;
     Place showPlace;
+    QScreen *m_screen;
     bool mouseOnHotPlace = false;
     bool m_supportTransport = true;
 

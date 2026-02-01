@@ -8,17 +8,19 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QStandardPaths>
+#include <QScreen>
 class Widget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Widget(QWidget *parent = nullptr);
+    explicit Widget(QScreen *screen, QWidget *parent = nullptr);
+    ~Widget();
 private:
     QSettings *qaq;
-    requ *TopLeft = new requ(requ::TopLeft);
-    requ *TopRight = new requ(requ::TopRight);
-    requ *LowerLeft = new requ(requ::LowerLeft);
-    requ *LowerRight = new requ(requ::LowerRight);
+    requ *TopLeft;
+    requ *TopRight;
+    requ *LowerLeft;
+    requ *LowerRight;
 
 signals:
 
