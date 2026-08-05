@@ -6,6 +6,11 @@
 #include <QTimer>
 #include <QProcess>
 #include <QCoreApplication>
+#include <QPoint>
+
+#ifdef USE_LAYER_SHELL
+#include <LayerShellQt/Window>
+#endif
 
 #define WIDGET_WIDTH 30
 #define WIDGET_SEARCH_WIDTH 2
@@ -25,6 +30,11 @@ public:
 
     void resizeWindow(Place where);
     void setTransportFlat();
+
+#ifdef USE_LAYER_SHELL
+    void setupLayerShell();
+    void setLayerShellPosition(const QPoint &pos);
+#endif
 
 private:
     QTimer *Timer = new QTimer;

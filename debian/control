@@ -10,6 +10,8 @@ Build-Depends:
  qt6-tools-dev-tools,
  qt6-5compat-dev,
  cmake,
+ layer-shell-qt,
+ liblayershellqtinterface-dev,
 Standards-Version: 4.5.1
 Homepage: https://gitee.com/GXDE-OS/gxde-requ
 Rules-Requires-Root: no

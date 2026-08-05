@@ -5,6 +5,7 @@
 #include <QHoverEvent>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QWindow>
 
 #ifdef Q_OS_LINUX
 #include <QDBusInterface>
@@ -17,12 +18,11 @@ requ::requ(QScreen *screen, Place whereIsShow, QWidget *parent) : QWidget(parent
     connect(Timer, SIGNAL(timeout()), this, SLOT(runShell()));
     this->setAttribute(Qt::WA_Hover,true);
     this->installEventFilter(this);
-    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
     this->setAttribute(Qt::WA_X11DoNotAcceptFocus);
     // 设置 Qt::X11BypassWindowManagerHint 以不被 gxde-top-panel 和 dde-dock 干扰
-    this->setWindowFlags(Qt::WindowDoesNotAcceptFocus | Qt::X11BypassWindowManagerHint);
+    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowDoesNotAcceptFocus | Qt::X11BypassWindowManagerHint);
     this->raise();
     resizeWindow(whereIsShow);
     setMaximumSize(WIDGET_WIDTH, WIDGET_WIDTH);
@@ -35,6 +35,15 @@ requ::requ(QScreen *screen, Place whereIsShow, QWidget *parent) : QWidget(parent
         setTransportFlat();
     });
     timer->start();
+#endif
+
+#ifdef USE_LAYER_SHELL
+    // 在窗口显示后设置 Layer Shell
+    QTimer::singleShot(0, this, [this]() {
+        if (QGuiApplication::platformName() == "wayland") {
+            setupLayerShell();
+        }
+    });
 #endif
 }
 
@@ -68,33 +77,39 @@ void requ::resizeWindow(Place where)
     else {
         hide();
     }
+
+    // 计算目标位置
+    QPoint targetPos;
     switch (where) {
     case Place::LowerLeft:
-        setGeometry(screenRect.x(),
-                    screenRect.y() + screenRect.height() - searchWidth,
-                    searchWidth,
-                    searchWidth);
+        targetPos = QPoint(screenRect.x(),
+                          screenRect.y() + screenRect.height() - searchWidth);
         break;
     case Place::LowerRight:
-        setGeometry(screenRect.x() + screenRect.width() - searchWidth,
-                    screenRect.y() + screenRect.height() - searchWidth,
-                    searchWidth,
-                    searchWidth);
+        targetPos = QPoint(screenRect.x() + screenRect.width() - searchWidth,
+                          screenRect.y() + screenRect.height() - searchWidth);
         break;
     case Place::TopLeft:
-        setGeometry(screenRect.x(),
-                    screenRect.y(),
-                    searchWidth,
-                    searchWidth);
+        targetPos = QPoint(screenRect.x(),
+                          screenRect.y());
         break;
     case Place::TopRight:
-        setGeometry(screenRect.x() + screenRect.width() - searchWidth,
-                    screenRect.y(),
-                    searchWidth,
-                    searchWidth);
+        targetPos = QPoint(screenRect.x() + screenRect.width() - searchWidth,
+                          screenRect.y());
         break;
     }
 
+    // 判断是否在 Wayland 环境下
+#ifdef USE_LAYER_SHELL
+    if (QGuiApplication::platformName() == "wayland") {
+        // Wayland 下使用 LayerShell 设置位置
+        setLayerShellPosition(targetPos);
+    } else
+#endif
+    {
+        // X11 下保持原有方式
+        setGeometry(targetPos.x(), targetPos.y(), searchWidth, searchWidth);
+    }
 
     update();
 }
@@ -210,3 +225,37 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
     }
     return QWidget::eventFilter(obj, event);
 }
+
+#ifdef USE_LAYER_SHELL
+void requ::setupLayerShell()
+{
+    QWindow *win = windowHandle();
+    if (!win) win = window()->windowHandle();
+    if (!win) return;
+
+    if (LayerShellQt::Window *lsWin = LayerShellQt::Window::get(win)) {
+        // 设置锚点为左上角
+        LayerShellQt::Window::Anchors anchors(LayerShellQt::Window::AnchorTop);
+        anchors |= LayerShellQt::Window::AnchorLeft;
+        lsWin->setAnchors(anchors);
+        lsWin->setLayer(LayerShellQt::Window::LayerTop);
+        lsWin->setKeyboardInteractivity(LayerShellQt::Window::KeyboardInteractivityNone);
+
+        // 使用 screen geometry 初始化位置
+        QRect screenRect = m_screen->geometry();
+        setLayerShellPosition(screenRect.topLeft());
+    }
+}
+
+void requ::setLayerShellPosition(const QPoint &pos)
+{
+    QWindow *win = windowHandle();
+    if (!win) win = window()->windowHandle();
+    if (!win) return;
+
+    if (LayerShellQt::Window *lsWin = LayerShellQt::Window::get(win)) {
+        // 设置 margins，使用 pos 作为左上角锚点的偏移
+        lsWin->setMargins(QMargins(pos.x(), pos.y(), 0, 0));
+    }
+}
+#endif

@@ -12,6 +12,7 @@ include(GNUInstallDirs)
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui)
 find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS DBus Widgets)
+find_package(LayerShellQt)
 
 qt_add_executable(gxde-requ WIN32 MACOSX_BUNDLE
     main.cpp
@@ -36,6 +37,15 @@ endif()
 if((QT_VERSION_MAJOR GREATER 4))
     target_link_libraries(gxde-requ PRIVATE
         Qt::Widgets
+    )
+endif()
+
+if(LayerShellQt_FOUND)
+    target_link_libraries(gxde-requ PRIVATE
+        LayerShellQt::Interface
+    )
+    target_compile_definitions(gxde-requ PRIVATE
+        USE_LAYER_SHELL
     )
 endif()
 

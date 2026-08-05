@@ -2,6 +2,10 @@
 #include <QApplication>
 #include <QList>
 
+#ifdef USE_LAYER_SHELL
+#include <LayerShellQt/Shell>
+#endif
+
 QList <Widget*> list;
 
 void loadWidget() {
@@ -16,8 +20,9 @@ void loadWidget() {
 
 int main(int argc, char *argv[])
 {
-    // 在 Wayland 下需要使用 xwayland 运行
-    qputenv("QT_QPA_PLATFORM", "xcb");
+#ifdef USE_LAYER_SHELL
+    LayerShellQt::Shell::useLayerShell();
+#endif
 
     QApplication a(argc, argv);
 
