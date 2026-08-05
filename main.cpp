@@ -1,5 +1,6 @@
 #include "widget.h"
-#include <QApplication>
+#include <DApplication>
+#include <DApplicationHelper>
 #include <QList>
 
 #ifdef USE_LAYER_SHELL
@@ -24,7 +25,11 @@ int main(int argc, char *argv[])
     LayerShellQt::Shell::useLayerShell();
 #endif
 
-    QApplication a(argc, argv);
+    Dtk::Widget::DApplication a(argc, argv);
+
+    if (!a.setSingleInstance("gxde-requ")) {
+        return 0;
+    }
 
     loadWidget();
 

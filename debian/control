@@ -12,6 +12,8 @@ Build-Depends:
  cmake,
  layer-shell-qt,
  liblayershellqtinterface-dev,
+ libdtk6core-dev,
+ libdtk2widget6-dev
 Standards-Version: 4.5.1
 Homepage: https://gitee.com/GXDE-OS/gxde-requ
 Rules-Requires-Root: no

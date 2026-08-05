@@ -13,6 +13,8 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui)
 find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS DBus Widgets)
 find_package(LayerShellQt)
+find_package(Dtk2widget REQUIRED)
+find_package(Dtk6Core REQUIRED)
 
 qt_add_executable(gxde-requ WIN32 MACOSX_BUNDLE
     main.cpp
@@ -26,6 +28,8 @@ target_compile_definitions(gxde-requ PRIVATE
 target_link_libraries(gxde-requ PRIVATE
     Qt::Core
     Qt::Gui
+    ${Dtk2widget_LIBRARIES}
+    Dtk6::Core
 )
 
 if(LINUX)
