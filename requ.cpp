@@ -1,4 +1,5 @@
 #include "requ.h"
+#include "dapplication.h"
 #include <QPainter>
 #include <QDebug>
 #include <QProcess>
@@ -10,6 +11,8 @@
 #ifdef Q_OS_LINUX
 #include <QDBusInterface>
 #endif
+
+DWIDGET_USE_NAMESPACE
 
 requ::requ(QScreen *screen, Place whereIsShow, QWidget *parent) : QWidget(parent)
 {
@@ -42,6 +45,7 @@ requ::requ(QScreen *screen, Place whereIsShow, QWidget *parent) : QWidget(parent
     QTimer::singleShot(0, this, [this]() {
         if (QGuiApplication::platformName() == "wayland") {
             setupLayerShell();
+            resizeWindow(showPlace);
         }
     });
 #endif
@@ -101,7 +105,7 @@ void requ::resizeWindow(Place where)
 
     // 判断是否在 Wayland 环境下
 #ifdef USE_LAYER_SHELL
-    if (QGuiApplication::platformName() == "wayland") {
+    if (DApplication::isWayland()) {
         // Wayland 下使用 LayerShell 设置位置
         setLayerShellPosition(targetPos);
     } else
