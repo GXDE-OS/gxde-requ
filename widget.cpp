@@ -59,10 +59,6 @@ Widget::Widget(QScreen *screen, QWidget *parent) : QWidget(parent)
                             screenRect.height() - WIDGET_WIDTH,
                             1,
                             1);*/
-    TopLeft->show();
-    TopRight->show();
-    LowerLeft->show();
-    LowerRight->show();
 }
 
 Widget::~Widget() {

@@ -33,7 +33,6 @@ public:
 
 #ifdef USE_LAYER_SHELL
     void setupLayerShell();
-    void setLayerShellPosition(const QPoint &pos);
 #endif
 
 private:
@@ -43,6 +42,7 @@ private:
     QScreen *m_screen;
     bool mouseOnHotPlace = false;
     bool m_supportTransport = true;
+    bool m_useLayerShell = false;
 
     void paintEvent(QPaintEvent* paint);
 

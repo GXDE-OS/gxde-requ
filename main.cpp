@@ -3,17 +3,11 @@
 #include <DApplicationHelper>
 #include <QList>
 
-#ifdef USE_LAYER_SHELL
-#include <LayerShellQt/Shell>
-#endif
-
 QList <Widget*> list;
 
 void loadWidget() {
-    for (int i = 0; i < list.count(); ++i) {
-        delete list[i];
-        list.remove(i);
-    }
+    qDeleteAll(list);
+    list.clear();
     for (QScreen *screen: QGuiApplication::screens()) {
         list << new Widget(screen);
     }
@@ -21,10 +15,6 @@ void loadWidget() {
 
 int main(int argc, char *argv[])
 {
-#ifdef USE_LAYER_SHELL
-    LayerShellQt::Shell::useLayerShell();
-#endif
-
     Dtk::Widget::DApplication a(argc, argv);
 
     if (!a.setSingleInstance("gxde-requ")) {
