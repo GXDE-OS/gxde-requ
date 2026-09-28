@@ -14,9 +14,9 @@ LowerRightShell
 
 在GXDE下，可通过热区设置进行快捷设置
 
-![输入图片说明](screenshot1.png)
+![输入图片说明](doc/imgs/screenshot1.png)
 
-![输入图片说明](screenshot2.png)
+![输入图片说明](doc/imgs/screenshot2.png)
 
 在其他桌面，可通过执行 gxde-requ-setter 设置
 
