@@ -3,18 +3,17 @@
 #include <DApplicationHelper>
 #include <QList>
 
-QList <Widget*> list;
+QList<Widget *> list;
 
 void loadWidget() {
     qDeleteAll(list);
     list.clear();
-    for (QScreen *screen: QGuiApplication::screens()) {
+    for (QScreen *screen : QGuiApplication::screens()) {
         list << new Widget(screen);
     }
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     Dtk::Widget::DApplication a(argc, argv);
 
     if (!a.setSingleInstance("gxde-requ")) {

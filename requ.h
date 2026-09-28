@@ -9,7 +9,7 @@
 #include <QPoint>
 
 #ifdef USE_LAYER_SHELL
-#include <LayerShellQt/Window>
+#  include <LayerShellQt/Window>
 #endif
 
 #define WIDGET_WIDTH 30
@@ -19,12 +19,7 @@ class requ : public QWidget
 {
     Q_OBJECT
 public:
-    enum Place {
-        TopLeft,
-        TopRight,
-        LowerLeft,
-        LowerRight
-    };
+    enum Place { TopLeft, TopRight, LowerLeft, LowerRight };
     explicit requ(QScreen *screen, Place whereIsShow, QWidget *parent = nullptr);
     void setShell(QString t);
 
@@ -44,7 +39,7 @@ private:
     bool m_supportTransport = true;
     bool m_useLayerShell = false;
 
-    void paintEvent(QPaintEvent* paint);
+    void paintEvent(QPaintEvent *paint);
 
 signals:
 

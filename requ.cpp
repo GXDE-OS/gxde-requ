@@ -8,21 +8,21 @@
 #include <QWindow>
 
 #ifdef Q_OS_LINUX
-#include <QDBusInterface>
+#  include <QDBusInterface>
 #endif
 
-requ::requ(QScreen *screen, Place whereIsShow, QWidget *parent) : QWidget(parent)
-{
+requ::requ(QScreen *screen, Place whereIsShow, QWidget *parent) : QWidget(parent) {
     m_screen = screen;
     showPlace = whereIsShow;
     connect(Timer, SIGNAL(timeout()), this, SLOT(runShell()));
-    this->setAttribute(Qt::WA_Hover,true);
+    this->setAttribute(Qt::WA_Hover, true);
     this->installEventFilter(this);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
     this->setAttribute(Qt::WA_X11DoNotAcceptFocus);
     // 设置 Qt::X11BypassWindowManagerHint 以不被 gxde-top-panel 和 dde-dock 干扰
-    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowDoesNotAcceptFocus | Qt::X11BypassWindowManagerHint);
+    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool
+                         | Qt::WindowDoesNotAcceptFocus | Qt::X11BypassWindowManagerHint);
 #ifdef USE_LAYER_SHELL
     // LayerShell must setup before program window sets up.
     if (QGuiApplication::platformName() == "wayland") {
@@ -33,23 +33,18 @@ requ::requ(QScreen *screen, Place whereIsShow, QWidget *parent) : QWidget(parent
     resizeWindow(whereIsShow);
     setMaximumSize(WIDGET_WIDTH, WIDGET_WIDTH);
 
-#ifdef Q_OS_LINUX  // 此部分只支持 Linux
+#ifdef Q_OS_LINUX // 此部分只支持 Linux
     setTransportFlat();
     QTimer *timer = new QTimer();
     timer->setInterval(1000);
-    connect(timer, &QTimer::timeout, this, [this](){
-        setTransportFlat();
-    });
+    connect(timer, &QTimer::timeout, this, [this]() { setTransportFlat(); });
     timer->start();
 #endif
 }
 
-void requ::setTransportFlat()
-{
+void requ::setTransportFlat() {
     // 使用 dbus 判断是否支持透明背景
-    QDBusInterface dbus("com.deepin.wm",
-                        "/com/deepin/wm",
-                        "com.deepin.wm");
+    QDBusInterface dbus("com.deepin.wm", "/com/deepin/wm", "com.deepin.wm");
     // 因为非 GXDE 未必有该dbus,所以必须保证这个接口存在才修改
     if (dbus.property("compositingEnabled").isValid()) {
         m_supportTransport = dbus.property("compositingEnabled").toBool();
@@ -58,8 +53,7 @@ void requ::setTransportFlat()
     m_supportTransport = true;
 }
 
-void requ::resizeWindow(Place where)
-{
+void requ::resizeWindow(Place where) {
     QScreen *screen = m_screen;
     QRect screenRect = screen->geometry();
 
@@ -68,7 +62,7 @@ void requ::resizeWindow(Place where)
         searchWidth = WIDGET_WIDTH;
     }
     if (shell.isEmpty()) {
-        hide();  // If corner unset then hide window.
+        hide(); // If corner unset then hide window.
         return;
     }
     setFixedSize(searchWidth, searchWidth);
@@ -85,20 +79,17 @@ void requ::resizeWindow(Place where)
     QPoint targetPos;
     switch (where) {
     case Place::LowerLeft:
-        targetPos = QPoint(screenRect.x(),
-                          screenRect.y() + screenRect.height() - searchWidth);
+        targetPos = QPoint(screenRect.x(), screenRect.y() + screenRect.height() - searchWidth);
         break;
     case Place::LowerRight:
         targetPos = QPoint(screenRect.x() + screenRect.width() - searchWidth,
-                          screenRect.y() + screenRect.height() - searchWidth);
+                           screenRect.y() + screenRect.height() - searchWidth);
         break;
     case Place::TopLeft:
-        targetPos = QPoint(screenRect.x(),
-                          screenRect.y());
+        targetPos = QPoint(screenRect.x(), screenRect.y());
         break;
     case Place::TopRight:
-        targetPos = QPoint(screenRect.x() + screenRect.width() - searchWidth,
-                          screenRect.y());
+        targetPos = QPoint(screenRect.x() + screenRect.width() - searchWidth, screenRect.y());
         break;
     }
 
@@ -107,8 +98,7 @@ void requ::resizeWindow(Place where)
     update();
 }
 
-void requ::setShell(QString t)
-{
+void requ::setShell(QString t) {
     if (t.trimmed().isEmpty()) {
         // 如果没有设置触发命令则不显示窗口
         t.clear();
@@ -118,20 +108,16 @@ void requ::setShell(QString t)
     resizeWindow(showPlace);
 }
 
-void requ::runShell()
-{
+void requ::runShell() {
     qDebug() << shell;
     QProcess::startDetached("bash", QStringList() << "-c" << shell);
     Timer->stop(); // 停止定时器，避免重复触发
 }
 
-
-void requ::paintEvent(QPaintEvent *)
-{
+void requ::paintEvent(QPaintEvent *) {
     if (!mouseOnHotPlace || shell.isEmpty() || !m_supportTransport) {
         return; // 热区未激活或未设置命令时不绘制
     }
-
 
     QPainter paint;
     paint.begin(this);
@@ -172,8 +158,7 @@ void requ::paintEvent(QPaintEvent *)
     paint.end();
 }
 
-bool requ::eventFilter(QObject *obj, QEvent *event)
-{
+bool requ::eventFilter(QObject *obj, QEvent *event) {
     if (obj == this) {
         if (event->type() == QEvent::HoverMove || event->type() == QEvent::HoverEnter) {
             auto hoverEvent = static_cast<QHoverEvent *>(event);
@@ -193,7 +178,8 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
                 hotZone = QRect(0, height() - hotZoneSize, hotZoneSize, hotZoneSize);
                 break;
             case Place::LowerRight:
-                hotZone = QRect(width() - hotZoneSize, height() - hotZoneSize, hotZoneSize, hotZoneSize);
+                hotZone = QRect(width() - hotZoneSize, height() - hotZoneSize, hotZoneSize,
+                                hotZoneSize);
                 break;
             }
 
@@ -220,15 +206,16 @@ bool requ::eventFilter(QObject *obj, QEvent *event)
 }
 
 #ifdef USE_LAYER_SHELL
-void requ::setupLayerShell()
-{
+void requ::setupLayerShell() {
     setScreen(m_screen);
     create();
     QWindow *win = windowHandle();
-    if (!win) return;
+    if (!win)
+        return;
 
     LayerShellQt::Window *lsWin = LayerShellQt::Window::get(win);
-    if (!lsWin) return;
+    if (!lsWin)
+        return;
 
     LayerShellQt::Window::Anchors anchors;
     switch (showPlace) {

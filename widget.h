@@ -15,6 +15,7 @@ class Widget : public QWidget
 public:
     explicit Widget(QScreen *screen, QWidget *parent = nullptr);
     ~Widget();
+
 private:
     QSettings *qaq;
     requ *TopLeft;
