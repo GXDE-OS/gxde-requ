@@ -54,3 +54,5 @@ debian/spark-store
 
 .vscode/*
 .cache/*
+
+!build-deb
