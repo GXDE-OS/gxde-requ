@@ -1,3 +1,9 @@
+gxde-requ (1.4.5) UNRELEASED; urgency=low
+  * 修复了Wayland下热区触发不稳定且触发角经常被顶栏挤掉的问题
+  * 清理了一下仓库
+
+ -- CharOfString <root@charofstring.cc>  Mon, 28 Sep 2026 00:57:08 -0500
+
 gxde-requ (1.4.4) UNRELEASED; urgency=low
 
   [ gfdgd_xi ]
