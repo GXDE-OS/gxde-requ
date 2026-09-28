@@ -17,10 +17,13 @@ find_package(Dtk2widget REQUIRED)
 find_package(Dtk6Core REQUIRED)
 
 qt_add_executable(gxde-requ WIN32 MACOSX_BUNDLE
-    main.cpp
-    requ.cpp requ.h
-    widget.cpp widget.h
+    src/main.cpp
+    src/requ/requ.cpp
+    src/requ/requ.h
+    src/widget/widget.cpp
+    src/widget/widget.h
 )
+
 target_compile_definitions(gxde-requ PRIVATE
     QT_DEPRECATED_WARNINGS
 )
@@ -62,8 +65,3 @@ install(TARGETS gxde-requ
     BUNDLE DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
-
-# Consider using qt_generate_deploy_app_script() for app deployment if
-# the project can use Qt 6.3. In that case rerun qmake2cmake with
-# --min-qt-version=6.3.

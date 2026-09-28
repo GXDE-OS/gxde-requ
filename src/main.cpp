@@ -1,4 +1,5 @@
-#include "widget.h"
+#include "src/widget/widget.h"
+
 #include <DApplication>
 #include <DApplicationHelper>
 #include <QList>

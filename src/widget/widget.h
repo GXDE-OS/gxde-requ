@@ -1,10 +1,11 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#include "../requ/requ.h"
+
 #include <QWidget>
 #include <QSettings>
 #include <QApplication>
-#include <requ.h>
 #include <QFile>
 #include <QFileInfo>
 #include <QStandardPaths>
