@@ -1,0 +1,32 @@
+# Maintainer: CharOfString <root@charofstring.cc>
+pkgname=gxde-requ-git
+pkgver=1.4.5
+pkgrel=1
+pkgdesc='GXDE hot corner launcher (ReQu)'
+arch=('x86_64' 'aarch64')
+url="https://github.com/GXDE-OS/gxde-requ"
+license=('GPL-3.0-or-later')
+# x11-utils 中实际用到的是 xprop ・ Of x11-utils only xprop is used.
+depends=('gxde-k9-git' 'xdotool' 'xorg-xprop' 'dtk2widget-qt6-git' 'dtk6core-git' 'layer-shell-qt'
+         'qt6-base' 'libgcc' 'libstdc++' 'glibc')
+makedepends=('git' 'cmake' 'ninja' 'qt6-tools')
+provides=('gxde-requ' 'dde-requ')
+conflicts=('gxde-requ' 'dde-requ')
+source=()
+sha512sums=()
+
+# 直接使用 PKGBUILD 所在的 git 仓库作为源码 ・ Build from the git checkout this PKGBUILD lives in.
+_srcroot() {
+  git -C "$startdir" rev-parse --show-toplevel
+}
+
+build() {
+  cmake -B build -S "$(_srcroot)" -GNinja \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  ninja -C build
+}
+
+package() {
+  DESTDIR="$pkgdir" ninja -C build install
+}
